@@ -14,13 +14,27 @@ func TestMultiCommand_New(t *testing.T) {
 	assert.Equal(t, cmd.Description(), "some-description")
 }
 
-func TestMultiCommand_Register_RegisterCommandWithSameName(t *testing.T) {
+func TestMultiCommand_Register_SameCommandName(t *testing.T) {
 	cmd := cmdp.NewMultiCommand("some-name", "some-description")
 	err := cmd.Register(cmd)
 	assert.Nil(t, err)
 
 	err = cmd.Register(cmd)
 	assert.EqualError(t, err, "some-name is already exist")
+}
+
+func TestMultiCommand_RegisterCommand(t *testing.T) {
+	multi := cmdp.NewMultiCommand("root", "root")
+	cmd, err := multi.RegisterCommand("some-name", "some-description", func(args []string) (string, error) {
+		return "output", nil
+	})
+	assert.Nil(t, err)
+
+	got, isExist := multi.GetCommand("some-name")
+
+	assert.Equal(t, isExist, true)
+	assert.Equal(t, cmd.Name(), "some-name")
+	assert.Equal(t, got, cmd)
 }
 
 func TestMultiCommand_Execute_NoArguments(t *testing.T) {

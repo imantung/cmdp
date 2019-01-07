@@ -5,6 +5,8 @@ import "fmt"
 type MultiCommand interface {
 	Command
 	Register(cmd Command) (err error)
+	RegisterCommand(name, description string, exec Execution) (cmd Command, err error)
+	GetCommand(name string) (cmd Command, isExist bool)
 }
 
 type multiCommand struct {
@@ -26,6 +28,17 @@ func (m *multiCommand) Register(cmd Command) (err error) {
 		return
 	}
 	m.cmdMap[name] = cmd
+	return
+}
+
+func (m *multiCommand) RegisterCommand(name, description string, exec Execution) (cmd Command, err error) {
+	cmd = NewCommand(name, description, exec)
+	err = m.Register(cmd)
+	return
+}
+
+func (m *multiCommand) GetCommand(name string) (cmd Command, isExist bool) {
+	cmd, isExist = m.cmdMap[name]
 	return
 }
 
