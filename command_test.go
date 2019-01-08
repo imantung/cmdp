@@ -9,7 +9,7 @@ import (
 )
 
 func TestCommand(t *testing.T) {
-	cmd := cmdp.NewCommand("some-name", "some-description", func(args []string) (string, error) {
+	cmd := cmdp.NewCommand("some-name", "some-description", func(args []string) (interface{}, error) {
 		return "some-output", fmt.Errorf("some-error")
 	})
 

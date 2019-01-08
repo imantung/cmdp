@@ -25,9 +25,13 @@ func TestMultiCommand_Register_SameCommandName(t *testing.T) {
 
 func TestMultiCommand_RegisterCommand(t *testing.T) {
 	multi := cmdp.NewMultiCommand("root", "root")
-	cmd, err := multi.RegisterCommand("some-name", "some-description", func(args []string) (string, error) {
-		return "output", nil
-	})
+	cmd, err := multi.RegisterCommand(
+		"some-name",
+		"some-description",
+		func(args []string) (interface{}, error) {
+			return "output", nil
+		},
+	)
 	assert.Nil(t, err)
 
 	got, isExist := multi.GetCommand("some-name")
@@ -55,12 +59,18 @@ func TestMultiCommand_Execute_CommandNotFound(t *testing.T) {
 
 func TestMultiCommand_Execute(t *testing.T) {
 	cmd := cmdp.NewMultiCommand("some-name", "some-description")
-	cmd.Register(cmdp.NewCommand("a", "description-a", func(args []string) (string, error) {
-		return strings.Join(args, " "), nil
-	}))
-	cmd.Register(cmdp.NewCommand("b", "description-b", func(args []string) (string, error) {
-		return strings.Join(args, "-"), nil
-	}))
+	cmd.Register(cmdp.NewCommand(
+		"a",
+		"description-a",
+		func(args []string) (interface{}, error) {
+			return strings.Join(args, " "), nil
+		}))
+	cmd.Register(cmdp.NewCommand(
+		"b",
+		"description-b",
+		func(args []string) (interface{}, error) {
+			return strings.Join(args, "-"), nil
+		}))
 
 	output, err := cmd.Execute([]string{"a", "1", "2", "3"})
 	assert.Nil(t, err)

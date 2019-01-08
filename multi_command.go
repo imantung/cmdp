@@ -42,7 +42,7 @@ func (m *multiCommand) GetCommand(name string) (cmd Command, isExist bool) {
 	return
 }
 
-func (m *multiCommand) Execute(args []string) (output string, err error) {
+func (m *multiCommand) Execute(args []string) (output interface{}, err error) {
 	if len(args) < 1 {
 		err = fmt.Errorf("missing arguments")
 		return
