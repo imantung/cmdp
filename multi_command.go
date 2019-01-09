@@ -42,7 +42,7 @@ func (m *multiCommand) GetCommand(name string) (cmd Command, isExist bool) {
 	return
 }
 
-func (m *multiCommand) Execute(args []string) (output interface{}, err error) {
+func (m *multiCommand) Execute(ctx interface{}, args []string) (output string, err error) {
 	if len(args) < 1 {
 		err = fmt.Errorf("missing arguments")
 		return
@@ -54,5 +54,5 @@ func (m *multiCommand) Execute(args []string) (output interface{}, err error) {
 		err = fmt.Errorf("Command '%s' is not found", cmdName)
 		return
 	}
-	return cmd.Execute(args[1:])
+	return cmd.Execute(ctx, args[1:])
 }

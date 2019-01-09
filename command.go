@@ -3,10 +3,10 @@ package cmdp
 type Command interface {
 	Name() string
 	Description() string
-	Execute(args []string) (output interface{}, err error)
+	Execute(ctx interface{}, args []string) (output string, err error)
 }
 
-type Execution func(args []string) (output interface{}, err error)
+type Execution func(ctx interface{}, args []string) (output string, err error)
 
 type command struct {
 	name        string
@@ -30,6 +30,6 @@ func (c *command) Description() string {
 }
 
 // Execute
-func (c *command) Execute(args []string) (output interface{}, err error) {
-	return c.exec(args)
+func (c *command) Execute(ctx interface{}, args []string) (output string, err error) {
+	return c.exec(ctx, args)
 }

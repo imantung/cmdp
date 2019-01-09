@@ -28,7 +28,7 @@ func TestMultiCommand_RegisterCommand(t *testing.T) {
 	cmd, err := multi.RegisterCommand(
 		"some-name",
 		"some-description",
-		func(args []string) (interface{}, error) {
+		func(ctx interface{}, args []string) (string, error) {
 			return "output", nil
 		},
 	)
@@ -43,8 +43,8 @@ func TestMultiCommand_RegisterCommand(t *testing.T) {
 
 func TestMultiCommand_Execute_NoArguments(t *testing.T) {
 	cmd := cmdp.NewMultiCommand("some-name", "some-description")
-	_, err1 := cmd.Execute(nil)
-	_, err2 := cmd.Execute([]string{})
+	_, err1 := cmd.Execute(nil, nil)
+	_, err2 := cmd.Execute(nil, []string{})
 
 	assert.EqualError(t, err1, "missing arguments")
 	assert.EqualError(t, err2, "missing arguments")
@@ -52,7 +52,7 @@ func TestMultiCommand_Execute_NoArguments(t *testing.T) {
 
 func TestMultiCommand_Execute_CommandNotFound(t *testing.T) {
 	cmd := cmdp.NewMultiCommand("some-name", "some-description")
-	_, err := cmd.Execute([]string{"some-command"})
+	_, err := cmd.Execute(nil, []string{"some-command"})
 
 	assert.EqualError(t, err, "Command 'some-command' is not found")
 }
@@ -62,21 +62,21 @@ func TestMultiCommand_Execute(t *testing.T) {
 	cmd.Register(cmdp.NewCommand(
 		"a",
 		"description-a",
-		func(args []string) (interface{}, error) {
+		func(ctx interface{}, args []string) (string, error) {
 			return strings.Join(args, " "), nil
 		}))
 	cmd.Register(cmdp.NewCommand(
 		"b",
 		"description-b",
-		func(args []string) (interface{}, error) {
+		func(ctx interface{}, args []string) (string, error) {
 			return strings.Join(args, "-"), nil
 		}))
 
-	output, err := cmd.Execute([]string{"a", "1", "2", "3"})
+	output, err := cmd.Execute(nil, []string{"a", "1", "2", "3"})
 	assert.Nil(t, err)
 	assert.Equal(t, output, "1 2 3")
 
-	output, err = cmd.Execute([]string{"b", "1", "2", "3"})
+	output, err = cmd.Execute(nil, []string{"b", "1", "2", "3"})
 	assert.Nil(t, err)
 	assert.Equal(t, output, "1-2-3")
 }
